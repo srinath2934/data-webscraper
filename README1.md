@@ -1,70 +1,49 @@
+# Part A — Landmark-Based Fetal Head Biometry
 
-Landmark-Based Fetal Head Biometry
-Overview
+## Overview
+This module estimates fetal head biometry using **landmark localization** from ultrasound images.
+The goal is to predict landmarks defining **Biparietal Diameter (BPD)** and
+**Occipitofrontal Diameter (OFD)** and compute these measurements automatically.
 
-Part A focuses on estimating fetal head biometry using a landmark-based deep learning approach.
-The objective is to predict anatomical landmarks corresponding to Biparietal Diameter (BPD) and Occipitofrontal Diameter (OFD) from ultrasound images and compute these measurements automatically.
+Both **direct coordinate regression** and **heatmap-based landmark regression**
+are explored to improve robustness under noisy ultrasound conditions.
 
-This part explores both direct coordinate regression and heatmap-based landmark regression.
+## Models Implemented
+- **AlexNet** — Direct coordinate regression
+- **ResNet-18** — Direct coordinate regression
+- **ResNet-34** — Direct coordinate regression
+- **Heatmap CNN (ResNet-18 backbone)** — Dense heatmap regression
 
-Models Implemented
+## Approach
+1. Input ultrasound image
+2. Model predicts:
+   - Coordinates (x, y), or
+   - Landmark heatmaps
+3. Extract landmark pairs for BPD and OFD
+4. Compute distances using Euclidean geometry
 
-The following models were trained and evaluated:
+## Training
+- Multi-frame ultrasound data treated as independent samples
+- Images resized and normalized
+- Regression loss for coordinate models
+- Pixel-wise loss on Gaussian heatmaps for heatmap model
 
-AlexNet – Direct landmark coordinate regression
+## Testing & Evaluation
+- Testing performed on **unseen images**
+- Emphasis on **qualitative visualization**
+- Heatmap landmarks extracted via argmax
+- Visual inspection used to assess stability
 
-ResNet-18 – Direct landmark coordinate regression
+## Files
+- `Part_A_Train.ipynb` — Training
+- `Part_A_testing.ipynb` — Testing & visualization
+- `Model_Weights/` — Saved checkpoints
 
-ResNet-34 – Direct landmark coordinate regression
+## Observations
+- Heatmap regression improves spatial stability
+- Coordinate regression is sensitive to blur and low contrast
+- Landmark-based methods are efficient but limited by sparse supervision
 
-Heatmap-Based CNN (ResNet-18 backbone) – Landmark localization via dense heatmap prediction
+## Notes
+Multi-frame subject-level aggregation is identified as future work.
 
-Approach
-
-Each ultrasound image is provided as input to the model.
-
-The model predicts either:
-
-Direct landmark coordinates (x, y), or
-
-Landmark probability heatmaps.
-
-Landmark pairs corresponding to BPD and OFD are extracted.
-
-Final biometry values are computed using Euclidean distance.
-
-Training Strategy
-
-Multi-frame ultrasound data is treated as independent samples.
-
-Standard image preprocessing (resize, normalization) is applied.
-
-Coordinate regression models are trained using regression loss.
-
-Heatmap-based models are trained using pixel-wise loss on Gaussian landmark heatmaps.
-
-Testing and Evaluation
-
-Testing is performed on unseen ultrasound images.
-
-Qualitative evaluation is emphasized through visualization of predicted landmarks.
-
-Heatmap predictions are converted to coordinates using argmax operations.
-
-Performance is analyzed visually rather than relying solely on numeric accuracy.
-
-Files
-
-Part_A_Train.ipynb – Training notebook for all Part A models
-
-Part_A_testing.ipynb – Testing and visualization notebook
-
-Model_Weights/ – Saved model weights
-
-Key Observations
-
-Heatmap-based regression provides improved spatial stability under noisy conditions.
-
-Direct coordinate regression is sensitive to low-contrast and blurred frames.
-
-Landmark-based approaches are efficient but limited by sparse supervision.
